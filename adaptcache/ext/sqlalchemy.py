@@ -7,10 +7,10 @@ Raw SQL run outside the ORM (or from another service) is not detected.
 General, DB-agnostic auto-invalidation is still on the roadmap, not here.
 
 Usage:
-    from cacheai import CacheAI
-    from cacheai.ext.sqlalchemy import watch_sqlalchemy
+    from adaptcache import AdaptCache
+    from adaptcache.ext.sqlalchemy import watch_sqlalchemy
 
-    cache = CacheAI(backend="redis", redis_url="redis://localhost:6379")
+    cache = AdaptCache(backend="redis", redis_url="redis://localhost:6379")
     watch_sqlalchemy(cache, Session)  # Session = your sessionmaker(...) class
 
     @cache.intelligent(tags=["users"])
@@ -26,12 +26,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from ..core import CacheAI
+    from ..core import AdaptCache
 
-_INFO_KEY = "_cacheai_touched_tables"
+_INFO_KEY = "_adaptcache_touched_tables"
 
 
-def watch_sqlalchemy(cache: "CacheAI", session_class: Any) -> None:
+def watch_sqlalchemy(cache: "AdaptCache", session_class: Any) -> None:
     """Attach event listeners to `session_class` (a sessionmaker(...) class,
     or scoped_session) that call `cache.invalidate_tag(table_name)` for
     every table touched by a committed transaction.
@@ -40,7 +40,7 @@ def watch_sqlalchemy(cache: "CacheAI", session_class: Any) -> None:
         from sqlalchemy import event
     except ImportError as exc:
         raise ImportError(
-            "watch_sqlalchemy requires SQLAlchemy. Install with: pip install cacheai[sqlalchemy]"
+            "watch_sqlalchemy requires SQLAlchemy. Install with: pip install adaptcache[sqlalchemy]"
         ) from exc
 
     @event.listens_for(session_class, "after_flush")

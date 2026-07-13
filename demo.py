@@ -1,4 +1,4 @@
-"""Illustrative demo: the TTL that CacheAI's adaptive heuristic assigns to
+"""Illustrative demo: the TTL that AdaptCache's adaptive heuristic assigns to
 a "hot" key (requested every ~2s) versus a "cold" key (requested every ~2h),
 compared to one fixed static TTL.
 
@@ -9,11 +9,11 @@ run yet, so no throughput/latency numbers are claimed here.
 Run: python demo.py
 """
 
-from cacheai import CacheAI
+from adaptcache import AdaptCache
 
 
 def main() -> None:
-    cache = CacheAI(backend="memory", adaptive_ttl=True, default_ttl=60, min_ttl=5, max_ttl=1800)
+    cache = AdaptCache(backend="memory", adaptive_ttl=True, default_ttl=60, min_ttl=5, max_ttl=1800)
 
     @cache.intelligent()
     def fetch(key: str):

@@ -1,4 +1,4 @@
-"""CacheAI core: a decorator that caches function results and adapts the
+"""AdaptCache core: a decorator that caches function results and adapts the
 TTL to how often each specific call is actually reused.
 
 v0.1 uses a transparent, explainable heuristic based on recent access
@@ -18,7 +18,7 @@ from typing import Any, Callable, Deque, Dict, Optional
 from .backends import MemoryBackend, RedisBackend
 
 
-class CacheAI:
+class AdaptCache:
     def __init__(
         self,
         backend: str = "memory",
@@ -65,7 +65,7 @@ class CacheAI:
             @wraps(func)
             def wrapper(*args: Any, **kwargs: Any) -> Any:
                 fingerprint = self._fingerprint(func, args, kwargs)
-                cache_key = f"cacheai:{func.__module__}.{func.__qualname__}:{fingerprint}"
+                cache_key = f"adaptcache:{func.__module__}.{func.__qualname__}:{fingerprint}"
                 self._known_keys[fingerprint] = cache_key
 
                 cached = self._backend.get(cache_key)
@@ -87,7 +87,7 @@ class CacheAI:
                 except TypeError as exc:
                     raise TypeError(
                         f"{func.__qualname__} returned a non-JSON-serializable value; "
-                        "cacheai v0.1 only caches JSON-safe results."
+                        "adaptcache v0.1 only caches JSON-safe results."
                     ) from exc
 
                 for tag in tags:

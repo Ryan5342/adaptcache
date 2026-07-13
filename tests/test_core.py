@@ -1,10 +1,10 @@
 import time
 
-from cacheai import CacheAI
+from adaptcache import AdaptCache
 
 
 def test_cache_hit_and_miss():
-    cache = CacheAI(backend="memory", adaptive_ttl=False, default_ttl=60)
+    cache = AdaptCache(backend="memory", adaptive_ttl=False, default_ttl=60)
     calls = []
 
     @cache.intelligent()
@@ -23,7 +23,7 @@ def test_cache_hit_and_miss():
 
 
 def test_different_args_are_different_cache_entries():
-    cache = CacheAI(backend="memory", adaptive_ttl=False, default_ttl=60)
+    cache = AdaptCache(backend="memory", adaptive_ttl=False, default_ttl=60)
 
     @cache.intelligent()
     def get_value(x):
@@ -35,7 +35,7 @@ def test_different_args_are_different_cache_entries():
 
 
 def test_invalidate_forces_recompute():
-    cache = CacheAI(backend="memory", adaptive_ttl=False, default_ttl=60)
+    cache = AdaptCache(backend="memory", adaptive_ttl=False, default_ttl=60)
     calls = []
 
     @cache.intelligent()
@@ -50,7 +50,7 @@ def test_invalidate_forces_recompute():
 
 
 def test_expired_entry_is_recomputed():
-    cache = CacheAI(backend="memory", adaptive_ttl=False, default_ttl=1)
+    cache = AdaptCache(backend="memory", adaptive_ttl=False, default_ttl=1)
     calls = []
 
     @cache.intelligent()
@@ -65,7 +65,7 @@ def test_expired_entry_is_recomputed():
 
 
 def test_adaptive_ttl_grows_for_frequently_accessed_key():
-    cache = CacheAI(backend="memory", adaptive_ttl=True, default_ttl=60, min_ttl=5, max_ttl=1800)
+    cache = AdaptCache(backend="memory", adaptive_ttl=True, default_ttl=60, min_ttl=5, max_ttl=1800)
 
     @cache.intelligent()
     def get_value(x):
@@ -82,7 +82,7 @@ def test_adaptive_ttl_grows_for_frequently_accessed_key():
 
 
 def test_adaptive_ttl_shrinks_for_rarely_accessed_key():
-    cache = CacheAI(backend="memory", adaptive_ttl=True, default_ttl=60, min_ttl=5, max_ttl=1800)
+    cache = AdaptCache(backend="memory", adaptive_ttl=True, default_ttl=60, min_ttl=5, max_ttl=1800)
 
     @cache.intelligent()
     def get_value(x):

@@ -1,8 +1,8 @@
-from cacheai import CacheAI
+from adaptcache import AdaptCache
 
 
 def test_invalidate_tag_clears_all_tagged_entries():
-    cache = CacheAI(backend="memory", adaptive_ttl=False, default_ttl=300)
+    cache = AdaptCache(backend="memory", adaptive_ttl=False, default_ttl=300)
     calls = []
 
     @cache.intelligent(tags=["users"])
@@ -20,7 +20,7 @@ def test_invalidate_tag_clears_all_tagged_entries():
 
 
 def test_invalidate_tag_does_not_affect_other_tags():
-    cache = CacheAI(backend="memory", adaptive_ttl=False, default_ttl=300)
+    cache = AdaptCache(backend="memory", adaptive_ttl=False, default_ttl=300)
     user_calls, order_calls = [], []
 
     @cache.intelligent(tags=["users"])
@@ -45,7 +45,7 @@ def test_invalidate_tag_does_not_affect_other_tags():
 
 
 def test_untagged_entries_are_unaffected_by_invalidate_tag():
-    cache = CacheAI(backend="memory", adaptive_ttl=False, default_ttl=300)
+    cache = AdaptCache(backend="memory", adaptive_ttl=False, default_ttl=300)
     calls = []
 
     @cache.intelligent()  # no tags

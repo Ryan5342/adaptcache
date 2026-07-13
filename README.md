@@ -1,4 +1,8 @@
-# CacheAI
+# AdaptCache
+
+[![tests](https://github.com/Ryan5342/adaptcache/actions/workflows/tests.yml/badge.svg)](https://github.com/Ryan5342/adaptcache/actions/workflows/tests.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](pyproject.toml)
 
 A caching decorator for Python functions that adapts each entry's TTL to
 how often it's actually reused, instead of one fixed TTL for everything.
@@ -10,15 +14,15 @@ how often it's actually reused, instead of one fixed TTL for everything.
 ## Why
 
 A fixed `TTL=300` either wastes cache space on data nobody re-requests, or
-expires popular data too soon. CacheAI tracks how often each specific call
+expires popular data too soon. AdaptCache tracks how often each specific call
 is reused and adjusts automatically: frequently-reused results get a
 longer TTL (up to a cap you set), rarely-reused ones expire fast.
 
 ## Install
 
 ```bash
-pip install cacheai         # in-memory backend, zero dependencies
-pip install cacheai[redis]  # + Redis backend
+pip install adaptcache         # in-memory backend, zero dependencies
+pip install adaptcache[redis]  # + Redis backend
 ```
 
 (Not published to PyPI yet -- for now, install from source: `pip install -e .`)
@@ -26,9 +30,9 @@ pip install cacheai[redis]  # + Redis backend
 ## Quick start
 
 ```python
-from cacheai import CacheAI
+from adaptcache import AdaptCache
 
-cache = CacheAI(backend="memory")  # or backend="redis", redis_url="redis://localhost:6379"
+cache = AdaptCache(backend="memory")  # or backend="redis", redis_url="redis://localhost:6379"
 
 @cache.intelligent()
 def get_user_profile(user_id: int):
@@ -47,11 +51,11 @@ benchmark.py` for real, measured numbers -- see [Benchmark](#benchmark).
 
 ## How the v0.1 heuristic works
 
-For each cached call, CacheAI keeps the last 20 access timestamps and
+For each cached call, AdaptCache keeps the last 20 access timestamps and
 computes the average gap between them. TTL scales so that frequently
 requested calls (short gap) trend toward `max_ttl`, and rarely requested
 calls (long gap) trend toward `min_ttl`. It's a few lines of math, not a
-model -- see `cacheai/core.py::_adaptive_ttl`.
+model -- see `adaptcache/core.py::_adaptive_ttl`.
 
 ## What's cached
 
@@ -83,7 +87,7 @@ any committed INSERT/UPDATE/DELETE automatically invalidates the matching
 tag -- no manual `.invalidate()` calls needed:
 
 ```python
-from cacheai.ext.sqlalchemy import watch_sqlalchemy
+from adaptcache.ext.sqlalchemy import watch_sqlalchemy
 
 watch_sqlalchemy(cache, Session)  # Session = your sessionmaker(...) class
 
@@ -95,7 +99,7 @@ def get_user(user_id: int):
 **Scope, honestly:** this only sees writes made through that `Session`
 class. Raw SQL run outside the ORM, or writes from another service, aren't
 detected -- general DB-agnostic auto-invalidation is still on the roadmap,
-not implemented today. Requires `pip install cacheai[sqlalchemy]`.
+not implemented today. Requires `pip install adaptcache[sqlalchemy]`.
 
 ## Benchmark
 

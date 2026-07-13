@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "cacheai"
+name = "adaptcache"
 version = "0.1.0"
 description = "A decorator that adapts cache TTL to how often each call is actually reused."
 readme = "README.md"
@@ -19,7 +19,7 @@ dev = ["pytest>=7.0", "redis>=4.0", "sqlalchemy>=1.4", "fastapi>=0.100", "httpx>
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["cacheai*"]
+include = ["adaptcache*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "examples"]

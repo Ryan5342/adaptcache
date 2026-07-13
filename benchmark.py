@@ -1,5 +1,5 @@
 """Real benchmark (not a mocked clock): replays one identical trace of
-requests against three strategies -- no cache, fixed TTL, and CacheAI's
+requests against three strategies -- no cache, fixed TTL, and AdaptCache's
 adaptive TTL -- and reports what actually happened in wall-clock time.
 
 Methodology, stated plainly:
@@ -26,7 +26,7 @@ import random
 import statistics
 import time
 
-from cacheai import CacheAI
+from adaptcache import AdaptCache
 
 N_KEYS = 50
 N_REQUESTS = 350
@@ -87,12 +87,12 @@ def main() -> None:
         run_trace(trace, cache=None, label="No cache"),
         run_trace(
             trace,
-            cache=CacheAI(backend="memory", adaptive_ttl=False, default_ttl=1),
+            cache=AdaptCache(backend="memory", adaptive_ttl=False, default_ttl=1),
             label="Static TTL=1s",
         ),
         run_trace(
             trace,
-            cache=CacheAI(backend="memory", adaptive_ttl=True, default_ttl=1, min_ttl=0.5, max_ttl=20),
+            cache=AdaptCache(backend="memory", adaptive_ttl=True, default_ttl=1, min_ttl=0.5, max_ttl=20),
             label="Adaptive TTL",
         ),
     ]

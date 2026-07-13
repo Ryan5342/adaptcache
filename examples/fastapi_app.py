@@ -1,5 +1,5 @@
 """A tiny, real, runnable example: a FastAPI service backed by SQLite that
-shows CacheAI's tag-based caching and automatic SQLAlchemy invalidation
+shows AdaptCache's tag-based caching and automatic SQLAlchemy invalidation
 working together end to end.
 
 Run it:
@@ -30,8 +30,8 @@ from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from cacheai import CacheAI
-from cacheai.ext.sqlalchemy import watch_sqlalchemy
+from adaptcache import AdaptCache
+from adaptcache.ext.sqlalchemy import watch_sqlalchemy
 
 Base = declarative_base()
 
@@ -55,10 +55,10 @@ engine = create_engine(
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 
-cache = CacheAI(backend="memory", adaptive_ttl=True, default_ttl=30, min_ttl=5, max_ttl=300)
+cache = AdaptCache(backend="memory", adaptive_ttl=True, default_ttl=30, min_ttl=5, max_ttl=300)
 watch_sqlalchemy(cache, Session)  # commits through this Session auto-invalidate tagged entries
 
-app = FastAPI(title="cacheai example")
+app = FastAPI(title="adaptcache example")
 
 
 class UserIn(BaseModel):

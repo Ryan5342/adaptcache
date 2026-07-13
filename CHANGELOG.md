@@ -13,7 +13,7 @@
 - Tag-based invalidation: `@cache.intelligent(tags=[...])` +
   `cache.invalidate_tag(...)`. Safe across processes on the Redis backend
   (tag membership is stored in Redis, not per-process memory).
-- `cacheai.ext.sqlalchemy.watch_sqlalchemy()`: automatic tag invalidation
+- `adaptcache.ext.sqlalchemy.watch_sqlalchemy()`: automatic tag invalidation
   when a watched SQLAlchemy `Session` commits a write to a matching table.
   Scoped to that ORM session -- raw SQL or other services aren't detected.
 

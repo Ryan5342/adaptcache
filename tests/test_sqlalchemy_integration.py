@@ -5,8 +5,8 @@ sqlalchemy = pytest.importorskip("sqlalchemy")
 from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-from cacheai import CacheAI
-from cacheai.ext.sqlalchemy import watch_sqlalchemy
+from adaptcache import AdaptCache
+from adaptcache.ext.sqlalchemy import watch_sqlalchemy
 
 Base = declarative_base()
 
@@ -25,7 +25,7 @@ def _make_session_class():
 
 def test_commit_invalidates_tagged_cache_entry():
     Session = _make_session_class()
-    cache = CacheAI(backend="memory", adaptive_ttl=False, default_ttl=300)
+    cache = AdaptCache(backend="memory", adaptive_ttl=False, default_ttl=300)
     watch_sqlalchemy(cache, Session)
     calls = []
 
@@ -53,7 +53,7 @@ def test_commit_invalidates_tagged_cache_entry():
 
 def test_rollback_does_not_invalidate():
     Session = _make_session_class()
-    cache = CacheAI(backend="memory", adaptive_ttl=False, default_ttl=300)
+    cache = AdaptCache(backend="memory", adaptive_ttl=False, default_ttl=300)
     watch_sqlalchemy(cache, Session)
     calls = []
 

@@ -1,9 +1,9 @@
-"""Cache storage backends for CacheAI.
+"""Cache storage backends for AdaptCache.
 
 Two backends ship in v0.1:
 - MemoryBackend: pure-Python dict, zero dependencies. Default backend,
   good for a single process, development, and tests.
-- RedisBackend: thin wrapper around redis-py (`pip install cacheai[redis]`).
+- RedisBackend: thin wrapper around redis-py (`pip install adaptcache[redis]`).
 """
 
 from __future__ import annotations
@@ -57,7 +57,7 @@ class RedisBackend:
             import redis  # type: ignore
         except ImportError as exc:
             raise ImportError(
-                "RedisBackend requires redis-py. Install with: pip install cacheai[redis]"
+                "RedisBackend requires redis-py. Install with: pip install adaptcache[redis]"
             ) from exc
         self._client = redis.from_url(redis_url)
 
@@ -77,11 +77,11 @@ class RedisBackend:
         raise NotImplementedError("clear() is not supported for RedisBackend")
 
     def tag_add(self, tag: str, key: str) -> None:
-        self._client.sadd(f"cacheai:tagset:{tag}", key)
+        self._client.sadd(f"adaptcache:tagset:{tag}", key)
 
     def tag_members(self, tag: str) -> set:
-        members = self._client.smembers(f"cacheai:tagset:{tag}")
+        members = self._client.smembers(f"adaptcache:tagset:{tag}")
         return {m.decode() if isinstance(m, bytes) else m for m in members}
 
     def tag_clear(self, tag: str) -> None:
-        self._client.delete(f"cacheai:tagset:{tag}")
+        self._client.delete(f"adaptcache:tagset:{tag}")
