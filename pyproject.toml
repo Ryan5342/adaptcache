@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cacheai"
+version = "0.1.0"
+description = "A decorator that adapts cache TTL to how often each call is actually reused."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Brayan" }]
+dependencies = []
+
+[project.optional-dependencies]
+redis = ["redis>=4.0"]
+sqlalchemy = ["sqlalchemy>=1.4"]
+dev = ["pytest>=7.0", "redis>=4.0", "sqlalchemy>=1.4", "fastapi>=0.100", "httpx>=0.24"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["cacheai*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "examples"]
