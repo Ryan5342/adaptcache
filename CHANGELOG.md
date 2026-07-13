@@ -20,6 +20,12 @@
 **Validation**
 - 14 tests (core, Redis, tags, SQLAlchemy integration, and a full FastAPI
   example) run in CI on Python 3.9-3.12 with a real Redis service container.
+- `mypy --strict` is clean across the package (found and fixed 12 real
+  issues in the process, including a backend interface that had no shared
+  type, and two `set`-vs-`.set()`-method naming collisions).
+- Package builds cleanly (`python -m build`) and passes `twine check`;
+  installed the built wheel into a throwaway venv and confirmed it
+  actually imports and runs. Not published to PyPI yet, but ready to be.
 - `benchmark.py`: a real (wall-clock, not mocked) benchmark comparing no
   cache / static TTL / adaptive TTL, with the honest result documented in
   the README -- adaptive wins when the static TTL is conservative, ties

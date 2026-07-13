@@ -25,7 +25,9 @@ pip install adaptcache         # in-memory backend, zero dependencies
 pip install adaptcache[redis]  # + Redis backend
 ```
 
-(Not published to PyPI yet -- for now, install from source: `pip install -e .`)
+(Not published to PyPI yet -- for now, install from source: `pip install -e .`.
+The name `adaptcache` is confirmed free on PyPI, and the package builds and
+passes `twine check` cleanly, so it's ready whenever that's worth doing.)
 
 ## Quick start
 

@@ -36,3 +36,7 @@ jobs:
 
       - name: Run tests
         run: pytest -v
+
+      - name: Type check with mypy (strict)
+        if: matrix.python-version == '3.12'
+        run: mypy adaptcache/ --strict

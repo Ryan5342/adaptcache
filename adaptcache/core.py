@@ -13,9 +13,9 @@ import json
 import time
 from collections import defaultdict, deque
 from functools import wraps
-from typing import Any, Callable, Deque, Dict, Optional
+from typing import Any, Callable, Deque, Dict, List, Optional
 
-from .backends import MemoryBackend, RedisBackend
+from .backends import Backend, MemoryBackend, RedisBackend
 
 
 class AdaptCache:
@@ -29,6 +29,7 @@ class AdaptCache:
         max_ttl: int = 3600,
         history_size: int = 20,
     ) -> None:
+        self._backend: Backend
         if backend == "memory":
             self._backend = MemoryBackend()
         elif backend == "redis":
@@ -52,16 +53,18 @@ class AdaptCache:
 
     # ---- public API --------------------------------------------------
 
-    def intelligent(self, ttl: Optional[int] = None, tags: Optional[list] = None) -> Callable:
+    def intelligent(
+        self, ttl: Optional[int] = None, tags: Optional[List[str]] = None
+    ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
         """Decorator: cache the wrapped function's return value.
 
         Return values must be JSON-serializable (dicts, lists, primitives).
         `tags` lets you group cache entries (e.g. by the DB table they read
         from) so they can all be invalidated together via `invalidate_tag()`.
         """
-        tags = tags or []
+        resolved_tags: List[str] = tags or []
 
-        def decorator(func: Callable) -> Callable:
+        def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
             @wraps(func)
             def wrapper(*args: Any, **kwargs: Any) -> Any:
                 fingerprint = self._fingerprint(func, args, kwargs)
@@ -90,7 +93,7 @@ class AdaptCache:
                         "adaptcache v0.1 only caches JSON-safe results."
                     ) from exc
 
-                for tag in tags:
+                for tag in resolved_tags:
                     self._backend.tag_add(tag, cache_key)
 
                 self._history[fingerprint].append(time.time())
@@ -101,7 +104,7 @@ class AdaptCache:
 
         return decorator
 
-    def invalidate(self, func: Callable, *args: Any, **kwargs: Any) -> None:
+    def invalidate(self, func: Callable[..., Any], *args: Any, **kwargs: Any) -> None:
         """Manually evict one cached call, e.g. right after an UPDATE/DELETE."""
         fingerprint = self._fingerprint(func, args, kwargs)
         cache_key = self._known_keys.get(fingerprint)
@@ -129,7 +132,7 @@ class AdaptCache:
     # ---- internals -----------------------------------------------------
 
     @staticmethod
-    def _fingerprint(func: Callable, args: Any, kwargs: Any) -> str:
+    def _fingerprint(func: Callable[..., Any], args: Any, kwargs: Any) -> str:
         sig = f"{func.__qualname__}:{args!r}:{sorted(kwargs.items())!r}"
         return hashlib.sha256(sig.encode()).hexdigest()[:16]
 
