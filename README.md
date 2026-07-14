@@ -27,7 +27,11 @@ pip install adaptcache[redis]  # + Redis backend
 
 (Not published to PyPI yet -- for now, install from source: `pip install -e .`.
 The name `adaptcache` is confirmed free on PyPI, and the package builds and
-passes `twine check` cleanly, so it's ready whenever that's worth doing.)
+passes `twine check` cleanly, so it's ready whenever that's worth doing.
+`.github/workflows/publish.yml` publishes automatically on a GitHub Release,
+using PyPI's Trusted Publishing -- no API token stored anywhere. One-time
+setup on PyPI's side: register this repo as a trusted publisher for the
+`adaptcache` project name before the first release.)
 
 ## Quick start
 
